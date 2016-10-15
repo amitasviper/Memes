@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp"
+    android:layout_marginBottom="15dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/card_view"
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        card_view:cardElevation="20dp"
+        card_view:cardCornerRadius="2dp"
+        card_view:contentPadding="10dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:weightSum="10">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/iv_user_pic"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/default_image"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv_username"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:shadowColor="#7000"
+                        android:shadowDx="3"
+                        android:shadowDy="3"
+                        android:shadowRadius="8"
+                        android:textSize="21sp"
+                        android:textStyle="bold"
+                        android:text="Username"/>
+
+                    <TextView
+                        android:id="@+id/tv_reputation"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="103"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_content"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:textStyle="bold"
+                android:textSize="12sp"
+                android:autoLink="web"
+                android:layout_marginTop="10dp"
+                android:text="This property defines the elevation of CardView. As you may know this one of the core concepts of Android material design. According to the elevation defined, Android system dynamically shows the shadow of any material on screen."
+                android:layout_weight="6"/>
+
+            <utils.ResizableImageView
+                android:id="@+id/iv_post"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:src="@drawable/default_image"/>
+
+            <TextView
+                android:id="@+id/tv_time"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:textStyle="bold"
+                android:text="4 Sep 2016, 08:30:42"
+                android:layout_gravity="end"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="1"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="5dp"
+                android:background="#c0c0c0"/>
+
+            <RelativeLayout
+                android:id="@+id/rl_share"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="3"
+                android:animateLayoutChanges="true"
+                android:weightSum="4">
+
+
+                <ImageView
+                    android:id="@+id/iv_whatsapp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:adjustViewBounds="true"
+                    android:baselineAlignBottom="@+id/button"
+                    android:background="@drawable/whatsapp"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
+
+                <ImageView
+                    android:id="@+id/iv_facebook"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:adjustViewBounds="true"
+                    android:background="@drawable/facebook"
+                    android:layout_marginLeft="45dp"
+                    android:layout_marginStart="45dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_toRightOf="@+id/iv_whatsapp"
+                    android:layout_toEndOf="@+id/iv_whatsapp" />
+
+                <ImageView
+                    android:id="@+id/iv_twitter"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:adjustViewBounds="true"
+                    android:layout_gravity="left"
+                    android:background="@drawable/twitter"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true" />
+
+                <ImageView
+                    android:id="@+id/iv_messaging"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:adjustViewBounds="true"
+                    android:layout_gravity="right"
+                    android:background="@drawable/sms"
+                    android:layout_alignParentTop="true"
+                    android:layout_toRightOf="@+id/iv_twitter"
+                    android:layout_toEndOf="@+id/iv_twitter"
+                    android:layout_marginLeft="50dp"
+                    android:layout_marginStart="50dp" />
+
+                <ImageView
+                    android:id="@+id/iv_share"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:adjustViewBounds="true"
+                    android:layout_gravity="right"
+                    android:background="@drawable/share"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+
+
+</LinearLayout>
