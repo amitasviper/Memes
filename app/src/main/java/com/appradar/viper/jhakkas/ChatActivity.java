@@ -217,3 +217,5 @@ public class ChatActivity extends AppCompatActivity {
         return CipherUtils.GetHashedString(Long.toString(resultId));
     }
 }
+
+//sample cooment to test git repo
