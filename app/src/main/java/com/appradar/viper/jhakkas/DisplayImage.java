@@ -23,3 +23,5 @@ public class DisplayImage extends AppCompatActivity {
 
     }
 }
+
+// second time adding same comment
