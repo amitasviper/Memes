@@ -6,9 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
@@ -35,7 +32,6 @@ public class LoginActivity extends AppCompatActivity {
     FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
-    ImageView iv_user_pic;
     String TAG = "LoginActivity";
 
     ProgressDialog nDialog;
@@ -62,8 +58,6 @@ public class LoginActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_login);
 
-        iv_user_pic = (ImageView) findViewById(R.id.iv_user_pic);
-
         LoginButton loginButton = (LoginButton) findViewById(R.id.btn_fb_login);
         loginButton.setReadPermissions("email", "public_profile");
 
@@ -88,15 +82,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-
-
-        Button next = (Button) findViewById(R.id.btn_next_activity);
-        next.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                StartMainActivity();
-            }
-        });
     }
 
 
