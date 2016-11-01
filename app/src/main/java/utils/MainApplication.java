@@ -1,13 +1,13 @@
 package utils;
 
 import android.app.Application;
-import android.os.Handler;
 
 import com.facebook.FacebookSdk;
 import com.firebase.client.Firebase;
 import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
+
 
 /**
  * Created by viper on 18/09/16.
@@ -19,7 +19,6 @@ public class MainApplication extends Application {
     public static Firebase FIREBASE_REF;
 
     private static MainApplication mInstance;
-    public static volatile Handler applicationHandler = null;
 
     @Override
     public void onCreate() {
@@ -31,8 +30,6 @@ public class MainApplication extends Application {
 
         FIREBASE_REF = new Firebase(MainApplication.FIREBASE_URL);
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-
-        applicationHandler = new Handler(getInstance().getMainLooper());
 
         Picasso.Builder builder = new Picasso.Builder(this);
         builder.downloader(new OkHttpDownloader(this,Integer.MAX_VALUE));

@@ -105,10 +105,10 @@ public class ChatActivity extends AppCompatActivity {
 
         recycler_view_chat.setAdapter(adapter);
 
-        final String your_name = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
-        final String friend_name = friend.getName();
+        final String your_email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        final String friend_email = friend.getEmail();
 
-        unique_id = calculateUniqueId(your_name, friend_name);
+        unique_id = calculateUniqueId(your_email, friend_email);
         final String uId =  unique_id;
 
 /*        MainActivity.ref.child("chat").child(uniqueId).addValueEventListener(new ValueEventListener() {
@@ -173,7 +173,7 @@ public class ChatActivity extends AppCompatActivity {
                     return;
                 et_message.setText("");
 
-                ChatMessage message = new ChatMessage(your_name, friend_name, msg_text.trim(), "123");
+                ChatMessage message = new ChatMessage(your_email, friend_email, msg_text.trim(), "123");
                 MainActivity.ref.child("chat").child(uId).child("messages").push().setValue(message);
             }
         });
@@ -207,11 +207,11 @@ public class ChatActivity extends AppCompatActivity {
     }
 
 
-    private String calculateUniqueId(String your_name, String friend_name)
+    private String calculateUniqueId(String your_email, String friend_email)
     {
 
-        long userOne = CipherUtils.GetHashedNumber(your_name);
-        long userTwo = CipherUtils.GetHashedNumber(friend_name);
+        long userOne = CipherUtils.GetHashedNumber(your_email);
+        long userTwo = CipherUtils.GetHashedNumber(friend_email);
 
         long resultId = userOne + userTwo;
         return CipherUtils.GetHashedString(Long.toString(resultId));

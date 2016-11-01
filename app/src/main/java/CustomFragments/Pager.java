@@ -22,11 +22,9 @@ public class Pager extends FragmentStatePagerAdapter {
     public android.support.v4.app.Fragment getItem(int pos) {
         switch(pos) {
 
-            case 0: return FirstFragment.newInstance("FirstFragment, Instance 1");
-            case 1: return SecondFragment.newInstance("SecondFragment, Instance 1");
-            case 2: return FriendsFragment.newInstance("My Friends, Instance 1");
-            case 3: return ThirdFragment.newInstance("ThirdFragment, Instance 2");
-            case 4: return ThirdFragment.newInstance("ThirdFragment, Instance 3");
+            case 0: return FirstFragment.newInstance("News Feeds, #1");
+            case 1: return FriendsFragment.newInstance("My Friends, #1");
+            case 2: return ThirdFragment.newInstance("Notifications, #1");
             default: return ThirdFragment.newInstance("ThirdFragment, Default");
         }
     }

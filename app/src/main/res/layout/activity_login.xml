@@ -62,6 +62,15 @@
         android:textColor="@color/white"
         android:text="@string/login"/>
 
+    <Button
+        android:id="@+id/btn_signUp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorAccent"
+        android:layout_marginTop="20dp"
+        android:textColor="@color/white"
+        android:text="@string/signUp"/>
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -80,7 +89,7 @@
 
 
         <com.google.android.gms.common.SignInButton
-            android:id="@+id/sign_in_button"
+            android:id="@+id/btn_google_login"
             android:layout_width="@dimen/login_button_width"
             android:layout_height="@dimen/login_button_height"
             android:layout_marginTop="20dp"

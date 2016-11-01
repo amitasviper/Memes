@@ -93,7 +93,7 @@ public class FriendsFragment extends Fragment implements RecyclerView.OnItemTouc
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 User user = dataSnapshot.getValue(User.class);
-                if (FirebaseAuth.getInstance().getCurrentUser().getDisplayName().equalsIgnoreCase(user.getName()))
+                if (FirebaseAuth.getInstance().getCurrentUser().getEmail().equalsIgnoreCase(user.getEmail()))
                     return;
                 friendsList.add(user);
                 adapter.notifyDataSetChanged();

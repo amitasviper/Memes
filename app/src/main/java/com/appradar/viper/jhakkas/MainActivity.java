@@ -74,11 +74,8 @@ public class MainActivity extends AppCompatActivity
 
         //Adding the tabs using addTab() method
         tabLayout.addTab(tabLayout.newTab().setText("ARTICLES"));
-        tabLayout.addTab(tabLayout.newTab().setText("IMAGES"));
         tabLayout.addTab(tabLayout.newTab().setText("FRIENDS"));
         tabLayout.addTab(tabLayout.newTab().setText("NOTIFICATIONS"));
-        tabLayout.addTab(tabLayout.newTab().setText("MESSAGES"));
-        tabLayout.addTab(tabLayout.newTab().setText("SETTINGS"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         //Initializing viewPager
@@ -251,6 +248,7 @@ public class MainActivity extends AppCompatActivity
         Picasso.with(MainActivity.this)
                 .load(user.getPhotoUrl())
                 .resize(80, 80)
+                .placeholder(R.drawable.profile_empty)
                 .transform(new CircleTransform())
                 .into(iv_profile_image);
 
