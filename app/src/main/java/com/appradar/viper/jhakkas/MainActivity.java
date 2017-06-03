@@ -158,6 +158,13 @@ public class MainActivity extends AppCompatActivity
                     tabLayout.getTabAt(position);
                 }
 
+                if(option_text.equalsIgnoreCase("Rate Us"))
+                {
+                    Intent intent = new Intent(MainActivity.this, NewChatActivity.class);
+                    startActivity(intent);
+                    return;
+                }
+
                 if (getResources().getString(R.string.logout).equalsIgnoreCase(option_text))
                 {
                     Logout();
@@ -267,7 +274,7 @@ public class MainActivity extends AppCompatActivity
 
     private void StartChatActivity(User friend)
     {
-        Intent intent = new Intent(this, ChatActivity.class);
+        Intent intent = new Intent(this, NewChatActivity.class);
         intent.putExtra("friend", friend);
         startActivity(intent);
     }

@@ -39,7 +39,6 @@ public class ChatActivity extends AppCompatActivity {
 
     EditText et_message;
     ImageButton btn_send_message;
-    ImageView iv_emoji;
     RecyclerView recycler_view_chat;
 
     String unique_id;
@@ -58,10 +57,8 @@ public class ChatActivity extends AppCompatActivity {
 
     private void InitViews()
     {
-
         Intent intent = getIntent();
         final User friend = intent.getParcelableExtra("friend");
-
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_chat);
         setSupportActionBar(toolbar);
@@ -173,7 +170,7 @@ public class ChatActivity extends AppCompatActivity {
                     return;
                 et_message.setText("");
 
-                ChatMessage message = new ChatMessage(your_email, friend_email, msg_text.trim(), "123");
+                ChatMessage message = new ChatMessage(your_email, friend_email, msg_text.trim(), "123", ChatMessage.MessageType.TEXT);
                 MainActivity.ref.child("chat").child(uId).child("messages").push().setValue(message);
             }
         });

@@ -93,14 +93,14 @@ public class SubmitImage extends AppCompatActivity {
 
 
     public String getPath(Uri uri) {
-        if( uri == null ) {
+        if (uri == null) {
             return null;
         }
         // try to retrieve the image from the media store first
         // this will only work for images selected from gallery
-        String[] projection = { MediaStore.Images.Media.DATA };
+        String[] projection = {MediaStore.Images.Media.DATA};
         Cursor cursor = managedQuery(uri, projection, null, null, null);
-        if( cursor != null ){
+        if (cursor != null) {
             int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
             cursor.moveToFirst();
             return cursor.getString(column_index);
@@ -109,26 +109,22 @@ public class SubmitImage extends AppCompatActivity {
         return uri.getPath();
     }
 
-    private class ButtonHandler implements View.OnClickListener
-    {
+    private class ButtonHandler implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            if (v.getId() == R.id.btn_select)
-            {
+            if (v.getId() == R.id.btn_select) {
 
                 Intent intent = new Intent();
                 intent.setType("image/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent,"Select Picture"), IMAGE_REQUEST_CODE);
+                startActivityForResult(Intent.createChooser(intent, "Select Picture"), IMAGE_REQUEST_CODE);
 
                 return;
             }
 
-            if (v.getId() == R.id.btn_submit)
-            {
+            if (v.getId() == R.id.btn_submit) {
 
-                if (image_uri == null)
-                {
+                if (image_uri == null) {
                     return;
                 }
 
