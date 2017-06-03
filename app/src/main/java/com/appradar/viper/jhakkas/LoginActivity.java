@@ -32,8 +32,8 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.GoogleAuthProvider;
 
 import models.User;
@@ -48,7 +48,6 @@ public class LoginActivity extends AppCompatActivity {
     FirebaseAuth.AuthStateListener mAuthListener;
     CallbackManager mCallbackManager;
     GoogleLogin googleLogin;
-
     ProgressDialog nDialog;
 
     EditText et_email, et_password;
@@ -59,11 +58,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         InitialiseFirebaseAuthObjects();
-
         setContentView(R.layout.activity_login);
-
         HandleFbLogin();
-
         InitViews();
     }
 
@@ -74,14 +70,12 @@ public class LoginActivity extends AppCompatActivity {
         btn_login = (Button) findViewById(R.id.btn_login);
         btn_signup = (Button) findViewById(R.id.btn_signUp);
 
-        LoginSignUpBtnClickListener listener = new LoginSignUpBtnClickListener();
-
-        btn_login.setOnClickListener(listener);
-        btn_signup.setOnClickListener(listener);
-
         SignInButton signInButton = (SignInButton) findViewById(R.id.btn_google_login);
         googleLogin = new GoogleLogin(LoginActivity.this);
 
+        LoginSignUpBtnClickListener listener = new LoginSignUpBtnClickListener();
+        btn_login.setOnClickListener(listener);
+        btn_signup.setOnClickListener(listener);
         signInButton.setOnClickListener(listener);
     }
 

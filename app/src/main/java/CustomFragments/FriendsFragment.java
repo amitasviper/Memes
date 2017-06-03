@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -93,6 +94,7 @@ public class FriendsFragment extends Fragment implements RecyclerView.OnItemTouc
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 User user = dataSnapshot.getValue(User.class);
+                Log.e("onChildAdded", user.toString());
                 if (FirebaseAuth.getInstance().getCurrentUser().getEmail().equalsIgnoreCase(user.getEmail()))
                     return;
                 friendsList.add(user);
