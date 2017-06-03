@@ -14,6 +14,7 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 import models.User;
+import utils.CircleTransform;
 
 /**
  * Created by viper on 17/09/16.
@@ -41,6 +42,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendDe
         holder.tv_friend_name.setText(friend.getName());
         Picasso.with(context)
                 .load(friend.getProfile_pic_url())
+                .transform(new CircleTransform())
                 .into(holder.iv_friend_photo);
         holder.tv_friend_name.setTag(friend);
     }

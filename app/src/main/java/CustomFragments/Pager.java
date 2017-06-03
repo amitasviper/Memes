@@ -24,7 +24,6 @@ public class Pager extends FragmentStatePagerAdapter {
 
             case 0: return FirstFragment.newInstance("News Feeds, #1");
             case 1: return FriendsFragment.newInstance("My Friends, #1");
-            case 2: return ThirdFragment.newInstance("Notifications, #1");
             default: return ThirdFragment.newInstance("ThirdFragment, Default");
         }
     }

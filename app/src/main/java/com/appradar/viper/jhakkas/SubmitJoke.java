@@ -122,6 +122,7 @@ public class SubmitJoke extends AppCompatActivity {
                         et_content.setText("");
 
                         Toast.makeText(SubmitJoke.this, "Post submitted for review", Toast.LENGTH_LONG).show();
+                        finish();
                         return;
                     }
 
@@ -149,6 +150,7 @@ public class SubmitJoke extends AppCompatActivity {
                     }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                            @SuppressWarnings("VisibleForTests")
                             double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
                             System.out.println("Upload is " + progress + "% done");
                             int currentprogress = (int) progress;
@@ -159,6 +161,8 @@ public class SubmitJoke extends AppCompatActivity {
                             System.out.println("Upload is paused");
                         }
                     });
+
+                    finish();
 
                     break;
 

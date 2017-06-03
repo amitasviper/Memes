@@ -31,7 +31,7 @@ public class TextPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     public static final int TEXT_POST = 1, IMAGE_POST = 2;
 
-    ImageView iv_whatsapp, iv_facebook, iv_twitter, iv_messaging, iv_share;
+    ImageView iv_whatsapp, iv_facebook, iv_twitter, iv_share;
 
     public TextPostsAdapter(Context context,ArrayList<TextPost> android) {
         this.postsArrayList = android;
@@ -111,13 +111,11 @@ public class TextPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             iv_whatsapp = (ImageView) itemView.findViewById(R.id.iv_whatsapp);
             iv_facebook = (ImageView) itemView.findViewById(R.id.iv_facebook);
             iv_twitter = (ImageView) itemView.findViewById(R.id.iv_twitter);
-            iv_messaging = (ImageView) itemView.findViewById(R.id.iv_messaging);
             iv_share = (ImageView) itemView.findViewById(R.id.iv_share);
 
             iv_whatsapp.setOnClickListener(this);
             iv_facebook.setOnClickListener(this);
             iv_twitter.setOnClickListener(this);
-            iv_messaging.setOnClickListener(this);
             iv_share.setOnClickListener(this);
 
             //img_android = (ImageView) view.findViewById(R.id.img_android);
@@ -168,13 +166,11 @@ public class TextPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             iv_whatsapp = (ImageView) itemView.findViewById(R.id.iv_whatsapp);
             iv_facebook = (ImageView) itemView.findViewById(R.id.iv_facebook);
             iv_twitter = (ImageView) itemView.findViewById(R.id.iv_twitter);
-            iv_messaging = (ImageView) itemView.findViewById(R.id.iv_messaging);
             iv_share = (ImageView) itemView.findViewById(R.id.iv_share);
 
             iv_whatsapp.setOnClickListener(this);
             iv_facebook.setOnClickListener(this);
             iv_twitter.setOnClickListener(this);
-            iv_messaging.setOnClickListener(this);
             iv_share.setOnClickListener(this);
 
             //img_android = (ImageView) view.findViewById(R.id.img_android);

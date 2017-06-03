@@ -11,6 +11,9 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.firebase.client.ChildEventListener;
@@ -136,8 +139,9 @@ public class NewChatActivity extends AppCompatActivity {
                             textMessage.setAvatarUrl(friend.getProfile_pic_url());
                             textMessage.setSource(MessageSource.EXTERNAL_USER);
                         }
-                        if (!message.equals(lastMessage))
+                        if (!message.equals(lastMessage)) {
                             slyceMessagingFragment.addNewMessage(textMessage);
+                        }
                     }
                     if (message.type == 1) {
                         MediaMessage mediaMessage = new MediaMessage();
@@ -206,6 +210,29 @@ public class NewChatActivity extends AppCompatActivity {
                 });
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        if (menuItem.getItemId() == android.R.id.home) {
+            Toast.makeText(NewChatActivity.this, "Home button clicked", Toast.LENGTH_SHORT).show();
+            finish();
+        }
+
+        else if (menuItem.getItemId() == R.id.delete_chat)
+        {
+            MainActivity.ref.child("chat").child(unique_id).child("messages").removeValue();
+            slyceMessagingFragment.replaceMessages(new ArrayList<Message>());
+            Toast.makeText(NewChatActivity.this, "All messages removed", Toast.LENGTH_SHORT).show();
+        }
+        return super.onOptionsItemSelected(menuItem);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.layout_menu_chat, menu);
+        return true;
     }
 
     private String calculateUniqueId(String your_email, String friend_email) {

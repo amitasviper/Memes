@@ -47,8 +47,8 @@ public class MainActivity extends AppCompatActivity
     TabLayout tabLayout;
     ViewPager viewPager;
 
-    DrawerLayout mDrawerLayout;
-    ListView mDrawerList;
+    DrawerLayout leftDrawerLayout;
+    ListView leftDrawerList;
 
     public static Firebase ref;
 
@@ -59,27 +59,17 @@ public class MainActivity extends AppCompatActivity
 
         ref = MainApplication.FIREBASE_REF;
 
-
-        // Getting reference to the DrawerLayout
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-
-        mDrawerList = (ListView) findViewById(R.id.drawer_list);
-
-        //Adding toolbar to the activity
+        leftDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        leftDrawerList = (ListView) findViewById(R.id.drawer_list);
+        tabLayout = (TabLayout) findViewById(R.id.tabLayout);
+        viewPager = (ViewPager) findViewById(R.id.pager);
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         //Initializing the tablayout
-        tabLayout = (TabLayout) findViewById(R.id.tabLayout);
-
-        //Adding the tabs using addTab() method
         tabLayout.addTab(tabLayout.newTab().setText("ARTICLES"));
         tabLayout.addTab(tabLayout.newTab().setText("FRIENDS"));
-        tabLayout.addTab(tabLayout.newTab().setText("NOTIFICATIONS"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
-
-        //Initializing viewPager
-        viewPager = (ViewPager) findViewById(R.id.pager);
 
         //Creating our pager adapter
         Pager adapter = new Pager(getSupportFragmentManager(), tabLayout.getTabCount());
@@ -110,15 +100,15 @@ public class MainActivity extends AppCompatActivity
         //Adding onTabSelectedListener to swipe views
         tabLayout.setOnTabSelectedListener(this);
 
-        // Creating an ArrayAdapter to add items to the listview mDrawerList
+        // Creating an ArrayAdapter to add items to the listview leftDrawerList
         ArrayAdapter<String> adapterL = new ArrayAdapter<String>(
                 getBaseContext(),
                 R.layout.drawer_list_item ,
                 getResources().getStringArray(R.array.drawerOptions)
         );
 
-        // Setting the adapter on mDrawerList
-        mDrawerList.setAdapter(adapterL);
+        // Setting the adapter on leftDrawerList
+        leftDrawerList.setAdapter(adapterL);
 
         // Enabling Home button
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -126,14 +116,12 @@ public class MainActivity extends AppCompatActivity
         // Disable Up navigation
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
-        // Setting item click listener for the listview mDrawerList NOT_WORKING
-        mDrawerList.setOnItemClickListener(new ListView.OnItemClickListener() {
+        // Setting item click listener for the listview leftDrawerList NOT_WORKING
+        leftDrawerList.setOnItemClickListener(new ListView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                mDrawerLayout.closeDrawers();
-
-                Log.e("setOnItemClickListener", "Position : " + position);
+                leftDrawerLayout.closeDrawers();
 
                 String option_text = ((TextView)view).getText().toString();
                 Toast.makeText(MainActivity.this, option_text, Toast.LENGTH_SHORT).show();
@@ -152,31 +140,18 @@ public class MainActivity extends AppCompatActivity
                     return;
                 }
 
-                if (position < tabLayout.getTabCount())
-                {
-                    viewPager.setCurrentItem(position);
-                    tabLayout.getTabAt(position);
-                }
-
-                if(option_text.equalsIgnoreCase("Rate Us"))
-                {
-                    Intent intent = new Intent(MainActivity.this, NewChatActivity.class);
-                    startActivity(intent);
-                    return;
-                }
-
                 if (getResources().getString(R.string.logout).equalsIgnoreCase(option_text))
                 {
                     Logout();
                 }
 
                 // Closing the drawer
-                mDrawerLayout.closeDrawer(Gravity.LEFT);
+                leftDrawerLayout.closeDrawer(Gravity.LEFT);
             }
         });
 
-        ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close);
-        mDrawerLayout.setDrawerListener(drawerToggle);
+        ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this, leftDrawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close);
+        leftDrawerLayout.setDrawerListener(drawerToggle);
 
         drawerToggle.syncState();
 
@@ -300,15 +275,10 @@ public class MainActivity extends AppCompatActivity
             case R.id.iv_facebook:
                 application = "com.facebook.katana";
                 shareText = "https://play.google.com/store/apps/details?id=com.appradar.lateststatusnquotes";
-                //shareText = "https://play.google.com/store/apps/details?id=com.appradar.viper.englishnonvegjokes";
                 break;
 
             case R.id.iv_twitter:
                 application = "com.twitter.android";
-                break;
-
-            case R.id.iv_messaging:
-                application = "";
                 break;
 
             case R.id.iv_share:
@@ -332,7 +302,7 @@ public class MainActivity extends AppCompatActivity
             shareIntent.setAction(Intent.ACTION_SEND);
             shareIntent.setType("text/plain");
             shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);
-            Intent chooser = Intent.createChooser(shareIntent, "Sahre Via");
+            Intent chooser = Intent.createChooser(shareIntent, "Share Via");
             this.startActivity(chooser);
             Log.e("onItemClick", "Application not found : " + application);
         }
