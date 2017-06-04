@@ -57,11 +57,17 @@ public class FirstFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
         MainActivity.ref.child("posts").addChildEventListener(new ChildEventListener() {
+            int post_count = 1;
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 TextPost textPost = dataSnapshot.getValue(TextPost.class);
                 if (textPost != null)
                     textPosts.add(textPost);
+                if (post_count % 5 == 0){
+                    TextPost adPost = new TextPost(post_count / 5, "", "", "", "", "", "");
+                    textPosts.add(adPost);
+                }
+                post_count += 1;
                 adapter.notifyDataSetChanged();
                 HideLoading();
             }

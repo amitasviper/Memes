@@ -12,7 +12,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.appradar.viper.jhakkas.DisplayImage;
+import com.appradar.viper.jhakkas.MainActivity;
 import com.appradar.viper.jhakkas.R;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
@@ -29,7 +32,7 @@ public class TextPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private Context context;
     private static TextPostClickListner mTextPostClickListner;
 
-    public static final int TEXT_POST = 1, IMAGE_POST = 2;
+    public static final int TEXT_POST = 5, IMAGE_POST = 6, AD_POST_1 = 0, AD_POST_2 = 1, AD_POST_3 = 2, AD_POST_4 = 3, AD_POST_5 = 4;
 
     ImageView iv_whatsapp, iv_facebook, iv_twitter, iv_share;
 
@@ -51,6 +54,27 @@ public class TextPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             case IMAGE_POST:
                 view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_post_image, viewGroup, false);
                 return new ImagePostHolder(view);
+
+            case AD_POST_1:
+                view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_ad_one, viewGroup, false);
+                return  new AdPostHolder(view);
+
+            case AD_POST_2:
+                view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_ad_two, viewGroup, false);
+                return  new AdPostHolder(view);
+
+            case AD_POST_3:
+                view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_ad_three, viewGroup, false);
+                return  new AdPostHolder(view);
+
+            case AD_POST_4:
+                view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_ad_four, viewGroup, false);
+                return  new AdPostHolder(view);
+
+            case AD_POST_5:
+                view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_ad_five, viewGroup, false);
+                return  new AdPostHolder(view);
+
         }
         return null;
     }
@@ -66,15 +90,26 @@ public class TextPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             case IMAGE_POST:
                 ((ImagePostHolder) viewHolder).SetPostContents(post);
                 break;
+
+            case AD_POST_1:
+            case AD_POST_2:
+            case AD_POST_3:
+            case AD_POST_4:
+            case AD_POST_5:
+                ((AdPostHolder) viewHolder).SetPostContents();
+                break;
         }
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (postsArrayList.get(position).getImageUrl().isEmpty()) {
-            return TEXT_POST;
-        } else {
+        if (!postsArrayList.get(position).getImageUrl().isEmpty()) {
             return IMAGE_POST;
+        } else if (postsArrayList.get(position).getPostContent().isEmpty()){
+            int adNumber = postsArrayList.get(position).getPostId();
+            return adNumber % 5;
+        } else {
+            return TEXT_POST;
         }
     }
 
@@ -125,6 +160,22 @@ public class TextPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         @Override
         public void onClick(View v) {
             mTextPostClickListner.onItemClick(this, v, TEXT_POST);
+        }
+    }
+
+    public static class AdPostHolder extends RecyclerView.ViewHolder {
+
+        AdView av_status;
+
+        public AdPostHolder(View itemView) {
+            super(itemView);
+            av_status = (AdView) itemView.findViewById(R.id.av_status);
+        }
+
+        public void SetPostContents(){
+            AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
+            AdRequest adRequest = adRequestBuilder.build();
+            av_status.loadAd(adRequest);
         }
     }
 
@@ -184,7 +235,6 @@ public class TextPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                         @Override
                         public void onError() {
-                            Toast.makeText(context, "Unable to load image", Toast.LENGTH_SHORT).show();
                         }
                     });
                 }

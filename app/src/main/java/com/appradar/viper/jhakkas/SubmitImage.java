@@ -28,7 +28,6 @@ import java.util.Calendar;
 import java.util.UUID;
 
 import models.TextPost;
-import utils.MainApplication;
 import utils.UploadPicture;
 
 public class SubmitImage extends AppCompatActivity {
@@ -129,13 +128,11 @@ public class SubmitImage extends AppCompatActivity {
                 }
 
                 String filename = UUID.randomUUID().toString();
-
                 UploadTask uploadTask = storageReference.child("images").child(filename).putFile(image_uri);
-
                 uploadTask.addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(SubmitImage.this, "Failed to upload file. Try again", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SubmitImage.this, "Failed to upload image. Try again", Toast.LENGTH_SHORT).show();
                     }
                 }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
@@ -146,6 +143,7 @@ public class SubmitImage extends AppCompatActivity {
                         String formattedDate = df.format(c.getTime());
 
                         String content = "This is a new image";
+                        @SuppressWarnings("VisibleForTests")
                         TextPost textPost = new TextPost(0, formattedDate, FirebaseAuth.getInstance().getCurrentUser().getDisplayName(), FirebaseAuth.getInstance().getCurrentUser().getUid(), FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl().toString(), content, taskSnapshot.getDownloadUrl().toString());
                         MainApplication.FIREBASE_REF.child("posts").push().setValue(textPost);
                         Toast.makeText(SubmitImage.this, "Successfully uploaded image", Toast.LENGTH_SHORT).show();

@@ -1,8 +1,11 @@
 package com.appradar.viper.jhakkas;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -25,20 +28,20 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.UUID;
 
 import models.TextPost;
-import utils.MainApplication;
 import utils.UploadPicture;
 
 public class SubmitJoke extends AppCompatActivity {
 
     EditText et_content;
     Button btn_submit;
-    ImageView iv_gallery, iv_camera, iv_user_pic, iv_content_image;
+    ImageView iv_gallery, iv_user_pic, iv_content_image;
     TextView tv_username, tv_reputations;
 
     static final int IMAGE_REQUEST_CODE = 12341;
@@ -65,8 +68,7 @@ public class SubmitJoke extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
-    private void InitViews()
-    {
+    private void InitViews() {
         storage = FirebaseStorage.getInstance();
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         storageReference = storage.getReferenceFromUrl(MainApplication.FIREBASE_STORAGE_URL).child(userId);
@@ -75,7 +77,6 @@ public class SubmitJoke extends AppCompatActivity {
         btn_submit = (Button) findViewById(R.id.btn_submit);
 
         iv_gallery = (ImageView) findViewById(R.id.iv_gallery);
-        iv_camera = (ImageView) findViewById(R.id.iv_camera);
         iv_user_pic = (ImageView) findViewById(R.id.iv_user_pic);
         iv_content_image = (ImageView) findViewById(R.id.iv_content_image);
 
@@ -91,26 +92,20 @@ public class SubmitJoke extends AppCompatActivity {
 
         btn_submit.setOnClickListener(clickListener);
         iv_gallery.setOnClickListener(clickListener);
-        iv_camera.setOnClickListener(clickListener);
-
     }
 
-    private class ViewClickListener implements View.OnClickListener
-    {
+    private class ViewClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            switch (v.getId())
-            {
+            switch (v.getId()) {
                 case R.id.btn_submit:
                     final String content = et_content.getText().toString().trim();
-                    if (content.isEmpty() && image_uri == null)
-                    {
+                    if (content.isEmpty() && image_uri == null) {
                         Toast.makeText(SubmitJoke.this, "Please add some content.", Toast.LENGTH_LONG).show();
                         return;
                     }
 
-                    if (image_uri == null)
-                    {
+                    if (image_uri == null) {
                         Calendar c = Calendar.getInstance();
 
                         SimpleDateFormat df = new SimpleDateFormat("dd MMM yyyy HH:mm");
@@ -126,9 +121,27 @@ public class SubmitJoke extends AppCompatActivity {
                         return;
                     }
 
-                    String filename = UUID.randomUUID().toString();
+                    final ProgressDialog progressDoalog = new ProgressDialog(SubmitJoke.this);
+                    progressDoalog.setMax(100);
+//                    progressDoalog.setMessage("Loading Content......");
+                    progressDoalog.setIndeterminate(false);
+                    progressDoalog.setTitle("Uploading ");
+                    progressDoalog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+//                    progressDoalog.setIndeterminate(true);
+                    progressDoalog.show();
 
-                    UploadTask uploadTask = storageReference.child("images").child(filename).putFile(image_uri);
+                    String filename = UUID.randomUUID().toString();
+                    Bitmap bmp;
+                    try {
+                        bmp = MediaStore.Images.Media.getBitmap(getContentResolver(), image_uri);
+                    } catch (IOException ex) {
+                        return;
+                    }
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    bmp.compress(Bitmap.CompressFormat.JPEG, 25, baos);
+                    byte[] data = baos.toByteArray();
+
+                    UploadTask uploadTask = storageReference.child("images").child(filename).putBytes(data);
 
                     uploadTask.addOnFailureListener(new OnFailureListener() {
                         @Override
@@ -139,13 +152,14 @@ public class SubmitJoke extends AppCompatActivity {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             Calendar c = Calendar.getInstance();
-
                             SimpleDateFormat df = new SimpleDateFormat("dd MMM yyyy HH:mm");
                             String formattedDate = df.format(c.getTime());
-
+                            @SuppressWarnings("VisibleForTests")
                             TextPost textPost = new TextPost(0, formattedDate, FirebaseAuth.getInstance().getCurrentUser().getDisplayName(), FirebaseAuth.getInstance().getCurrentUser().getUid(), FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl().toString(), content, taskSnapshot.getDownloadUrl().toString());
                             MainApplication.FIREBASE_REF.child("posts").push().setValue(textPost);
                             Toast.makeText(SubmitJoke.this, "Successfully uploaded image", Toast.LENGTH_SHORT).show();
+                            progressDoalog.hide();
+                            finish();
                         }
                     }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                         @Override
@@ -154,33 +168,22 @@ public class SubmitJoke extends AppCompatActivity {
                             double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
                             System.out.println("Upload is " + progress + "% done");
                             int currentprogress = (int) progress;
+                            progressDoalog.setProgress(currentprogress);
                         }
                     }).addOnPausedListener(new OnPausedListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onPaused(UploadTask.TaskSnapshot taskSnapshot) {
-                            System.out.println("Upload is paused");
+                            progressDoalog.hide();
                         }
                     });
-
-                    finish();
-
                     break;
 
                 case R.id.iv_gallery:
-                    Toast.makeText(SubmitJoke.this, "Gallery Selected", Toast.LENGTH_LONG).show();
-
                     Intent intent = new Intent();
                     intent.setType("image/*");
                     intent.setAction(Intent.ACTION_GET_CONTENT);
-                    startActivityForResult(Intent.createChooser(intent,"Select Picture"), IMAGE_REQUEST_CODE);
-
+                    startActivityForResult(Intent.createChooser(intent, "Select Picture"), IMAGE_REQUEST_CODE);
                     break;
-
-
-                case  R.id.iv_camera:
-                    Intent camera = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                    startActivityForResult(camera, CAMERA_REQUEST_CODE);
-
             }
         }
     }
@@ -203,13 +206,10 @@ public class SubmitJoke extends AppCompatActivity {
                     btn_submit.setEnabled(false);
                     e.printStackTrace();
                 }
-
-                //image_path = getPath(selectedImageUri);
                 return;
             }
 
-            if (requestCode == CAMERA_REQUEST_CODE)
-            {
+            if (requestCode == CAMERA_REQUEST_CODE) {
                 Uri selectedImageUri = data.getData();
 
                 UploadPicture picture = new UploadPicture(selectedImageUri, this.getContentResolver());
@@ -223,8 +223,6 @@ public class SubmitJoke extends AppCompatActivity {
                     btn_submit.setEnabled(false);
                     e.printStackTrace();
                 }
-
-                //image_path = getPath(selectedImageUri);
                 return;
             }
         }
@@ -233,10 +231,8 @@ public class SubmitJoke extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
         if (menuItem.getItemId() == android.R.id.home) {
-            Toast.makeText(SubmitJoke.this, "Back button clicked", Toast.LENGTH_SHORT).show();
             finish();
         }
-
         return super.onOptionsItemSelected(menuItem);
     }
 }

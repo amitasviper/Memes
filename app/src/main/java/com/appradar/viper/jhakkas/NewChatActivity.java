@@ -1,5 +1,6 @@
 package com.appradar.viper.jhakkas;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -8,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -47,7 +49,6 @@ import models.TextPost;
 import models.User;
 import utils.CipherUtils;
 import utils.CircleTransform;
-import utils.MainApplication;
 
 public class NewChatActivity extends AppCompatActivity {
     SlyceMessagingFragment slyceMessagingFragment;
@@ -198,7 +199,7 @@ public class NewChatActivity extends AppCompatActivity {
                 uploadTask.addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(NewChatActivity.this, "Failed to upload file. Try again", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(NewChatActivity.this, "Failed to upload image. Try again", Toast.LENGTH_SHORT).show();
                     }
                 }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
@@ -215,15 +216,27 @@ public class NewChatActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
         if (menuItem.getItemId() == android.R.id.home) {
-            Toast.makeText(NewChatActivity.this, "Home button clicked", Toast.LENGTH_SHORT).show();
             finish();
-        }
+        } else if (menuItem.getItemId() == R.id.delete_chat) {
 
-        else if (menuItem.getItemId() == R.id.delete_chat)
-        {
-            MainActivity.ref.child("chat").child(unique_id).child("messages").removeValue();
-            slyceMessagingFragment.replaceMessages(new ArrayList<Message>());
-            Toast.makeText(NewChatActivity.this, "All messages removed", Toast.LENGTH_SHORT).show();
+            AlertDialog.Builder builder;
+            builder = new AlertDialog.Builder(NewChatActivity.this, android.R.style.Theme_Material_Dialog_Alert);
+            builder.setTitle("Clear chat history")
+                    .setMessage("This will delete complete chat history from both ends. You want to prceed?")
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            MainActivity.ref.child("chat").child(unique_id).child("messages").removeValue();
+                            slyceMessagingFragment.replaceMessages(new ArrayList<Message>());
+                            Toast.makeText(NewChatActivity.this, "All messages removed", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // do nothing
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
         }
         return super.onOptionsItemSelected(menuItem);
     }

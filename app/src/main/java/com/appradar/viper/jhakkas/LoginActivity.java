@@ -12,12 +12,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.facebook.AccessToken;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
 import com.firebase.client.Firebase;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -39,7 +33,6 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.GoogleAuthProvider;
 
 import models.User;
-import utils.MainApplication;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -48,7 +41,6 @@ public class LoginActivity extends AppCompatActivity {
 
     FirebaseAuth mAuth;
     FirebaseAuth.AuthStateListener mAuthListener;
-    CallbackManager mCallbackManager;
     GoogleLogin googleLogin;
     ProgressDialog nDialog;
 
@@ -114,8 +106,6 @@ public class LoginActivity extends AppCompatActivity {
                 // Google Sign In failed, update UI appropriately
                 // ...
             }
-        } else {
-            mCallbackManager.onActivityResult(requestCode, resultCode, data);
         }
     }
 
@@ -146,12 +136,8 @@ public class LoginActivity extends AppCompatActivity {
                             FirebaseUser user_info = FirebaseAuth.getInstance().getCurrentUser();
                             if (user_info != null) {
                                 User userdetails = new User(user_info.getDisplayName(), user_info.getPhotoUrl().toString(), user_info.getEmail());
-
                                 Firebase myRef = new Firebase(MainApplication.FIREBASE_URL);
-
                                 myRef.child("users").child(user_info.getUid()).setValue(userdetails);
-
-                                Toast.makeText(LoginActivity.this, "New user saved", Toast.LENGTH_SHORT).show();
                             }
                         }
                     }

@@ -3,6 +3,7 @@ package com.appradar.viper.jhakkas;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -24,8 +25,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.facebook.login.LoginManager;
 import com.firebase.client.Firebase;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.squareup.picasso.Picasso;
@@ -37,20 +39,21 @@ import Temp.Person;
 import customadapters.TextPostsAdapter;
 import models.User;
 import utils.CircleTransform;
-import utils.MainApplication;
 
 public class MainActivity extends AppCompatActivity
         implements TabLayout.OnTabSelectedListener,
         FirstFragment.StoreInDatabaseListener,
         FriendsFragment.OnFriendClickListener,
-        TextPostsAdapter.TextPostClickListner{
+        TextPostsAdapter.TextPostClickListner {
 
     TabLayout tabLayout;
     ViewPager viewPager;
-
     DrawerLayout leftDrawerLayout;
     ListView leftDrawerList;
     public static Firebase ref;
+
+    boolean isExitPressed;
+    InterstitialAd interstitialAd;
 
     static boolean DEBUG = false;
 
@@ -67,11 +70,28 @@ public class MainActivity extends AppCompatActivity
         viewPager = (ViewPager) findViewById(R.id.pager);
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        CacheLargeAd();
         //Initializing the tablayout
         tabLayout.addTab(tabLayout.newTab().setText("ARTICLES"));
         tabLayout.addTab(tabLayout.newTab().setText("FRIENDS"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                if (tab.getText() != "FRIENDS")
+                    displayInterstitialAd();
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
 
         //Creating our pager adapter
         Pager adapter = new Pager(getSupportFragmentManager(), tabLayout.getTabCount());
@@ -80,8 +100,7 @@ public class MainActivity extends AppCompatActivity
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels)
-            {
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 //Log.e("onPageScrolled", position + "  " +positionOffset );
             }
 
@@ -93,8 +112,7 @@ public class MainActivity extends AppCompatActivity
             }
 
             @Override
-            public void onPageScrollStateChanged(int state)
-            {
+            public void onPageScrollStateChanged(int state) {
                 //handle if needed
             }
         });
@@ -105,7 +123,7 @@ public class MainActivity extends AppCompatActivity
         // Creating an ArrayAdapter to add items to the listview leftDrawerList
         ArrayAdapter<String> adapterL = new ArrayAdapter<String>(
                 getBaseContext(),
-                R.layout.drawer_list_item ,
+                R.layout.drawer_list_item,
                 getResources().getStringArray(R.array.drawerOptions)
         );
 
@@ -122,38 +140,26 @@ public class MainActivity extends AppCompatActivity
         leftDrawerList.setOnItemClickListener(new ListView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
                 leftDrawerLayout.closeDrawers();
-
-                String option_text = ((TextView)view).getText().toString();
-                Toast.makeText(MainActivity.this, option_text, Toast.LENGTH_SHORT).show();
-
-                if (option_text.equalsIgnoreCase(getString(R.string.submitArticle)))
-                {
+                String option_text = ((TextView) view).getText().toString();
+                if (option_text.equalsIgnoreCase(getString(R.string.submitArticle))) {
                     Intent intent = new Intent(MainActivity.this, SubmitJoke.class);
                     startActivity(intent);
                     return;
                 }
-
-                if (option_text.equalsIgnoreCase(getString(R.string.submitImage)))
-                {
+                if (option_text.equalsIgnoreCase(getString(R.string.submitImage))) {
                     Intent intent = new Intent(MainActivity.this, SubmitImage.class);
                     startActivity(intent);
                     return;
                 }
-
-                if (option_text.equalsIgnoreCase("Rate Us")){
+                if (option_text.equalsIgnoreCase("Rate Us")) {
                     String appPackage = MainActivity.this.getPackageName();
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackage));
                     MainActivity.this.startActivity(intent);
                 }
-
-                if (getResources().getString(R.string.logout).equalsIgnoreCase(option_text))
-                {
+                if (getResources().getString(R.string.logout).equalsIgnoreCase(option_text)) {
                     Logout();
                 }
-
-                // Closing the drawer
                 leftDrawerLayout.closeDrawer(Gravity.LEFT);
             }
         });
@@ -186,13 +192,10 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
         if (menuItem.getItemId() == android.R.id.home) {
-            Toast.makeText(MainActivity.this, "Home button clicked", Toast.LENGTH_SHORT).show();
         }
 
-        if (menuItem.getItemId() == R.id.logout)
-        {
+        if (menuItem.getItemId() == R.id.logout) {
             Logout();
-
         }
         return super.onOptionsItemSelected(menuItem);
     }
@@ -209,30 +212,24 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    private void StartLoginActivity()
-    {
+    private void StartLoginActivity() {
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
 
-    private void Logout()
-    {
-        Toast.makeText(MainActivity.this, "Logout clicked", Toast.LENGTH_SHORT).show();
+    private void Logout() {
         FirebaseAuth.getInstance().signOut();
-        LoginManager.getInstance().logOut();
         StartLoginActivity();
     }
 
-    private void SetupProfileInfo()
-    {
+    private void SetupProfileInfo() {
         ImageView iv_profile_image = (ImageView) findViewById(R.id.iv_profile_image);
         TextView iv_profile_name = (TextView) findViewById(R.id.tv_profile_name);
         TextView iv_profile_email = (TextView) findViewById(R.id.tv_profile_email);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-        if (user == null)
-        {
+        if (user == null) {
             return;
         }
 
@@ -256,8 +253,7 @@ public class MainActivity extends AppCompatActivity
         StartChatActivity(friend);
     }
 
-    private void StartChatActivity(User friend)
-    {
+    private void StartChatActivity(User friend) {
         Intent intent = new Intent(this, NewChatActivity.class);
         intent.putExtra("friend", friend);
         startActivity(intent);
@@ -269,14 +265,13 @@ public class MainActivity extends AppCompatActivity
         String application = "";
         String shareText = "";
         if (HolderType == TextPostsAdapter.TEXT_POST)
-            shareText = ((TextPostsAdapter.TextPostHolder)holder).GetViewContents();
+            shareText = ((TextPostsAdapter.TextPostHolder) holder).GetViewContents();
         else
-            shareText = ((TextPostsAdapter.ImagePostHolder)holder).GetViewContents();
+            shareText = ((TextPostsAdapter.ImagePostHolder) holder).GetViewContents();
 
         shareText += "\n Sent Via : https://goo.gl/Xg51Ha";
 
-        switch (view.getId())
-        {
+        switch (view.getId()) {
             case R.id.iv_whatsapp:
                 application = "com.whatsapp";
                 break;
@@ -314,6 +309,52 @@ public class MainActivity extends AppCompatActivity
             Intent chooser = Intent.createChooser(shareIntent, "Share Via");
             this.startActivity(chooser);
             Log.e("onItemClick", "Application not found : " + application);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (isExitPressed) {
+            super.onBackPressed();
+            return;
+        }
+
+        this.isExitPressed = true;
+        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+
+        new Handler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                isExitPressed = false;
+            }
+        }, 2000);
+        isExitPressed = true;
+    }
+
+    private void CacheLargeAd() {
+        interstitialAd = MainApplication.ManageAdsObject.getInterstitialAd();
+        interstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+                MainApplication.ManageAdsObject.refreshAd();
+            }
+
+            @Override
+            public void onAdLoaded() {
+                Log.e("INTERSTETIAL", "INTERSTETIAL AD loaded");
+            }
+
+            @Override
+            public void onAdFailedToLoad(int i) {
+                Log.e("INTERSTETIAL", "INTERSTETIAL AD FAILED FAILED");
+            }
+        });
+    }
+
+    private void displayInterstitialAd() {
+        if (interstitialAd.isLoaded()) {
+            interstitialAd.show();
         }
     }
 }

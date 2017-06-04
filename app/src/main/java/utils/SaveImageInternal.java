@@ -9,6 +9,7 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.appradar.viper.jhakkas.MainApplication;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -94,8 +95,6 @@ public class SaveImageInternal {
                                   out.flush();
                                   out.close();
                               } catch(Exception e){
-                                  Toast.makeText(context, "Error : " + e, Toast.LENGTH_LONG).show();
-                                  // some action
                               }
                           }
 

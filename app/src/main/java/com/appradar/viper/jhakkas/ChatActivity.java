@@ -180,7 +180,6 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
         if (menuItem.getItemId() == android.R.id.home) {
-            Toast.makeText(ChatActivity.this, "Home button clicked", Toast.LENGTH_SHORT).show();
             finish();
         }
 
@@ -189,8 +188,6 @@ public class ChatActivity extends AppCompatActivity {
             MainActivity.ref.child("chat").child(unique_id).child("messages").removeValue();
             chatMessages.clear();
             adapter.notifyDataSetChanged();
-            Toast.makeText(ChatActivity.this, "All messages removed", Toast.LENGTH_SHORT).show();
-
         }
 
         return super.onOptionsItemSelected(menuItem);
