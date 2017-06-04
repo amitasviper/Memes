@@ -71,6 +71,13 @@
         android:textColor="@color/white"
         android:text="@string/signUp"/>
 
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/btn_google_login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center_horizontal" />
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -78,42 +85,5 @@
         android:layout_weight="1">
 
     </LinearLayout>
-
-
-        <com.facebook.login.widget.LoginButton
-            android:id="@+id/btn_fb_login"
-            android:layout_width="@dimen/login_button_width"
-            android:layout_height="300dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="30dp" />
-
-
-        <com.google.android.gms.common.SignInButton
-            android:id="@+id/btn_google_login"
-            android:layout_width="@dimen/login_button_width"
-            android:layout_height="@dimen/login_button_height"
-            android:layout_marginTop="20dp"
-            android:layout_gravity="center_horizontal" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/white"
-        android:gravity="center"
-        android:textStyle="bold"
-        android:layout_marginTop="10dp"
-        android:text="@string/loginPromise"/>
-
-
-    <TextView
-        android:id="@+id/tv_createAccount"
-        android:textColor="@color/white"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:textSize="16sp"
-        android:gravity="center_horizontal"
-        android:text="@string/createAccount"/>
-
 
 </LinearLayout>

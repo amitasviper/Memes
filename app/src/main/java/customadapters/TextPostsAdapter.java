@@ -33,7 +33,7 @@ public class TextPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     ImageView iv_whatsapp, iv_facebook, iv_twitter, iv_share;
 
-    public TextPostsAdapter(Context context,ArrayList<TextPost> android) {
+    public TextPostsAdapter(Context context, ArrayList<TextPost> android) {
         this.postsArrayList = android;
         this.context = context;
         mTextPostClickListner = (TextPostClickListner) context;
@@ -43,8 +43,7 @@ public class TextPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int postType) {
         View view = null;
 
-        switch (postType)
-        {
+        switch (postType) {
             case TEXT_POST:
                 view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_post_text, viewGroup, false);
                 return new TextPostHolder(view);
@@ -58,31 +57,23 @@ public class TextPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
-
         TextPost post = postsArrayList.get(position);
-
-        switch (getItemViewType(position))
-        {
+        switch (getItemViewType(position)) {
             case TEXT_POST:
-                ((TextPostHolder)viewHolder).SetPostContents(post);
+                ((TextPostHolder) viewHolder).SetPostContents(post);
                 break;
 
             case IMAGE_POST:
-                ((ImagePostHolder)viewHolder).SetPostContents(post);
+                ((ImagePostHolder) viewHolder).SetPostContents(post);
                 break;
         }
-        //Picasso.with(context).load(postsArrayList.get(i).getUrl()).placeholder(R.drawable.default_image).resize(240, 120).into(viewHolder.img_android);
     }
-
 
     @Override
     public int getItemViewType(int position) {
-        if (postsArrayList.get(position).getImageUrl().isEmpty())
-        {
+        if (postsArrayList.get(position).getImageUrl().isEmpty()) {
             return TEXT_POST;
-        }
-        else
-        {
+        } else {
             return IMAGE_POST;
         }
     }
@@ -92,7 +83,7 @@ public class TextPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         return postsArrayList.size();
     }
 
-    public class TextPostHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class TextPostHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView tv_content, tv_time, tv_username, tv_reputations;
 
         private ImageView iv_userpic;
@@ -117,12 +108,9 @@ public class TextPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             iv_facebook.setOnClickListener(this);
             iv_twitter.setOnClickListener(this);
             iv_share.setOnClickListener(this);
-
-            //img_android = (ImageView) view.findViewById(R.id.img_android);
         }
 
-        public void SetPostContents(TextPost post)
-        {
+        public void SetPostContents(TextPost post) {
             Picasso.with(context).load(post.getUserPicUrl()).placeholder(R.drawable.default_image).into(iv_userpic);
             tv_username.setText(post.getPostUser());
             tv_reputations.setText("125");
@@ -130,8 +118,7 @@ public class TextPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             tv_time.setText(post.getPostTime());
         }
 
-        public String GetViewContents()
-        {
+        public String GetViewContents() {
             return this.tv_content.getText().toString();
         }
 
@@ -141,14 +128,10 @@ public class TextPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
     }
 
-
-    public class ImagePostHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class ImagePostHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView tv_content, tv_time, tv_username, tv_reputations;
         private ImageView iv_post, iv_userpic;
-
         private String url;
-
-        //private ImageView img_android;
 
         public ImagePostHolder(View view) {
             super(view);
@@ -172,29 +155,17 @@ public class TextPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             iv_facebook.setOnClickListener(this);
             iv_twitter.setOnClickListener(this);
             iv_share.setOnClickListener(this);
-
-            //img_android = (ImageView) view.findViewById(R.id.img_android);
         }
 
-        public void SetPostContents(TextPost post)
-        {
+        public void SetPostContents(TextPost post) {
             final TextPost tpost = post;
-
-            //.networkPolicy(NetworkPolicy.OFFLINE)
             Picasso.with(context).load(post.getUserPicUrl()).placeholder(R.drawable.default_image).into(iv_userpic);
-
             url = post.getImageUrl();
-
             tv_username.setText(post.getPostUser());
             tv_reputations.setText("125");
 
             tv_content.setText(post.getPostContent());
             tv_time.setText(post.getPostTime());
-
-
-            //SaveImageInternal.DownloadAndSaveImage(context,post.getImageUrl(),iv_post);
-
-            //Picasso.with(context).load(new File("/data/data/com.appradar.viper.jhakkas/files/jhakkas/2016-10-11_12_11_18_270.jpg")).into(iv_post);
 
 
             Picasso.with(context).load(post.getImageUrl()).networkPolicy(NetworkPolicy.OFFLINE).placeholder(R.drawable.default_image).into(iv_post, new Callback() {
@@ -231,8 +202,7 @@ public class TextPostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             });
         }
 
-        public String GetViewContents()
-        {
+        public String GetViewContents() {
             return this.tv_content.getText().toString() + "\n" + url;
         }
 

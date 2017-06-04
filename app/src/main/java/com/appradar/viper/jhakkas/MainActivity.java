@@ -1,6 +1,7 @@
 package com.appradar.viper.jhakkas;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -49,8 +50,9 @@ public class MainActivity extends AppCompatActivity
 
     DrawerLayout leftDrawerLayout;
     ListView leftDrawerList;
-
     public static Firebase ref;
+
+    static boolean DEBUG = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,6 +142,12 @@ public class MainActivity extends AppCompatActivity
                     return;
                 }
 
+                if (option_text.equalsIgnoreCase("Rate Us")){
+                    String appPackage = MainActivity.this.getPackageName();
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackage));
+                    MainActivity.this.startActivity(intent);
+                }
+
                 if (getResources().getString(R.string.logout).equalsIgnoreCase(option_text))
                 {
                     Logout();
@@ -156,6 +164,7 @@ public class MainActivity extends AppCompatActivity
         drawerToggle.syncState();
 
         SetupProfileInfo();
+        leftDrawerLayout.openDrawer(Gravity.LEFT);
     }
 
     @Override

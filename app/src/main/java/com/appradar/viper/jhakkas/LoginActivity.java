@@ -32,6 +32,8 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.GoogleAuthProvider;
@@ -59,18 +61,17 @@ public class LoginActivity extends AppCompatActivity {
 
         InitialiseFirebaseAuthObjects();
         setContentView(R.layout.activity_login);
-        HandleFbLogin();
         InitViews();
     }
 
-    private void InitViews()
-    {
+    private void InitViews() {
         et_email = (EditText) findViewById(R.id.et_email);
         et_password = (EditText) findViewById(R.id.et_password);
         btn_login = (Button) findViewById(R.id.btn_login);
         btn_signup = (Button) findViewById(R.id.btn_signUp);
 
         SignInButton signInButton = (SignInButton) findViewById(R.id.btn_google_login);
+        signInButton.setSize(SignInButton.SIZE_WIDE);
         googleLogin = new GoogleLogin(LoginActivity.this);
 
         LoginSignUpBtnClickListener listener = new LoginSignUpBtnClickListener();
@@ -79,51 +80,21 @@ public class LoginActivity extends AppCompatActivity {
         signInButton.setOnClickListener(listener);
     }
 
-    private void InitialiseFirebaseAuthObjects()
-    {
+    private void InitialiseFirebaseAuthObjects() {
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null)
-                {
+                if (user != null) {
                     HideLoading();
                     StartMainActivity();
                     Log.e("InitFirebAuthObs", "onAuthStateChanged: called user not null");
-                } else
-                {
+                } else {
                     Log.e("onAuthStateChanged", "onAuthStateChanged:signed_out");
                 }
             }
         };
-    }
-
-    private void HandleFbLogin()
-    {
-        LoginButton fbLoginButton = (LoginButton) findViewById(R.id.btn_fb_login);
-        fbLoginButton.setReadPermissions("email", "public_profile");
-
-        mCallbackManager = CallbackManager.Factory.create();
-
-        fbLoginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                Log.e("FacebookLogin", "facebook:onSuccess:" + loginResult);
-                ShowLoading();
-                HandleFacebookAccessToken(loginResult.getAccessToken());
-            }
-
-            @Override
-            public void onCancel() {
-                Log.e("FacebookLogin", "facebook:onCancel");
-            }
-
-            @Override
-            public void onError(FacebookException error) {
-                Log.e("FacebookLogin", "facebook:onError", error);
-            }
-        });
     }
 
     @Override
@@ -143,54 +114,37 @@ public class LoginActivity extends AppCompatActivity {
                 // Google Sign In failed, update UI appropriately
                 // ...
             }
-        }
-        else
-        {
+        } else {
             mCallbackManager.onActivityResult(requestCode, resultCode, data);
         }
     }
 
-    private void HandleGoogleSignInResult(GoogleSignInAccount acct)
-    {
+    private void HandleGoogleSignInResult(GoogleSignInAccount acct) {
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         SaveUserToDatabase(credential);
 
     }
 
-    private void HandleFacebookAccessToken(AccessToken token) {
-        Log.d(TAG, "handleFacebookAccessToken:" + token);
-
-        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-        SaveUserToDatabase(credential);
-    }
-
-    private void SaveUserToDatabase(AuthCredential credential)
-    {
+    private void SaveUserToDatabase(AuthCredential credential) {
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
-
                         HideLoading();
-
                         if (!task.isSuccessful()) {
                             Log.w(TAG, "signInWithCredential", task.getException());
                             Toast.makeText(LoginActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
 
-                            if(task.getException() instanceof FirebaseAuthUserCollisionException) {
+                            if (task.getException() instanceof FirebaseAuthUserCollisionException) {
                                 Toast.makeText(getApplicationContext(), "User with Email id already exists",
                                         Toast.LENGTH_SHORT).show();
                                 FirebaseAuth.getInstance().signOut();
                             }
-                        }
-
-                        else
-                        {
+                        } else {
                             FirebaseUser user_info = FirebaseAuth.getInstance().getCurrentUser();
-                            if (user_info != null)
-                            {
+                            if (user_info != null) {
                                 User userdetails = new User(user_info.getDisplayName(), user_info.getPhotoUrl().toString(), user_info.getEmail());
 
                                 Firebase myRef = new Firebase(MainApplication.FIREBASE_URL);
@@ -200,14 +154,11 @@ public class LoginActivity extends AppCompatActivity {
                                 Toast.makeText(LoginActivity.this, "New user saved", Toast.LENGTH_SHORT).show();
                             }
                         }
-
-                        // ...
                     }
                 });
     }
 
-    private void StartMainActivity()
-    {
+    private void StartMainActivity() {
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
@@ -228,21 +179,19 @@ public class LoginActivity extends AppCompatActivity {
         mAuth.addAuthStateListener(mAuthListener);
     }
 
-    private void ShowLoading()
-    {
-        if(nDialog == null)
+    private void ShowLoading() {
+        if (nDialog == null)
             Loading();
         nDialog.show();
     }
 
-    private void HideLoading()
-    {
-        if(nDialog == null)
+    private void HideLoading() {
+        if (nDialog == null)
             return;
         nDialog.hide();
     }
-    private void Loading()
-    {
+
+    private void Loading() {
         nDialog = new ProgressDialog(LoginActivity.this);
         nDialog.setMessage("Please wait");
         nDialog.setTitle("Signing in");
@@ -250,13 +199,10 @@ public class LoginActivity extends AppCompatActivity {
         nDialog.setCancelable(false);
     }
 
-    public class LoginSignUpBtnClickListener implements View.OnClickListener
-    {
+    public class LoginSignUpBtnClickListener implements View.OnClickListener {
         @Override
-        public void onClick(View btn)
-        {
-            if (btn.getId() == R.id.btn_google_login)
-            {
+        public void onClick(View btn) {
+            if (btn.getId() == R.id.btn_google_login) {
                 googleLogin.SignIn();
                 return;
             }
@@ -264,48 +210,61 @@ public class LoginActivity extends AppCompatActivity {
             String email, password;
             email = et_email.getText().toString();
             password = et_password.getText().toString();
-            if (email.isEmpty() || password.isEmpty())
-            {
+            if (email.isEmpty() || password.isEmpty()) {
                 Toast.makeText(LoginActivity.this, "Please input valid credentials", Toast.LENGTH_LONG).show();
                 return;
             }
 
             ShowLoading();
 
-            if (btn.getId() == R.id.btn_signUp)
-            {
+            if (btn.getId() == R.id.btn_signUp) {
                 mAuth.createUserWithEmailAndPassword(email, password)
                         .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
-                                Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
-
                                 HideLoading();
                                 if (!task.isSuccessful()) {
-                                    Toast.makeText(LoginActivity.this, "Authentication failed.",
-                                            Toast.LENGTH_SHORT).show();
+                                    try {
+                                        throw task.getException();
+                                    } catch(FirebaseAuthWeakPasswordException e) {
+                                        et_password.setError(getString(R.string.error_weak_password));
+                                        et_password.requestFocus();
+                                    } catch(FirebaseAuthInvalidCredentialsException e) {
+                                        et_email.setError(getString(R.string.error_invalid_email));
+                                        et_email.requestFocus();
+                                    } catch(FirebaseAuthUserCollisionException e) {
+                                        et_email.setError(getString(R.string.error_user_exists));
+                                        et_email.requestFocus();
+                                    } catch(Exception e) {
+                                        Log.e(TAG, e.getMessage());
+                                    }
+                                    Toast.makeText(LoginActivity.this, "Signup failed.",Toast.LENGTH_SHORT).show();
                                 }
-
-                                // ...
                             }
                         });
-            }
-            else if (btn.getId() == R.id.btn_login)
-            {
+            } else if (btn.getId() == R.id.btn_login) {
                 mAuth.signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
-                                Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
-
                                 HideLoading();
                                 if (!task.isSuccessful()) {
-                                    Log.w(TAG, "signInWithEmail", task.getException());
-                                    Toast.makeText(LoginActivity.this, "Authentication failed.",
-                                            Toast.LENGTH_SHORT).show();
+                                    try {
+                                        throw task.getException();
+                                    } catch(FirebaseAuthWeakPasswordException e) {
+                                        et_password.setError(getString(R.string.error_weak_password));
+                                        et_password.requestFocus();
+                                    } catch(FirebaseAuthInvalidCredentialsException e) {
+                                        et_email.setError(getString(R.string.error_invalid_email));
+                                        et_email.requestFocus();
+                                    } catch(FirebaseAuthUserCollisionException e) {
+                                        et_email.setError(getString(R.string.error_user_exists));
+                                        et_email.requestFocus();
+                                    } catch(Exception e) {
+                                        Log.e(TAG, e.getMessage());
+                                    }
+                                    Toast.makeText(LoginActivity.this, "Login failed.",Toast.LENGTH_SHORT).show();
                                 }
-
-                                // ...
                             }
                         });
             }
@@ -313,26 +272,23 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-    private class GoogleLogin implements GoogleApiClient.OnConnectionFailedListener
-    {
+    private class GoogleLogin implements GoogleApiClient.OnConnectionFailedListener {
         Context context;
         GoogleApiClient mGoogleApiClient;
 
-        public GoogleLogin(Context context)
-        {
+        public GoogleLogin(Context context) {
             this.context = context;
             HandleGoogleLogin();
         }
 
-        private void HandleGoogleLogin()
-        {
+        private void HandleGoogleLogin() {
             GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                     .requestIdToken(getString(R.string.default_web_client_id))
                     .requestEmail()
                     .build();
 
             mGoogleApiClient = new GoogleApiClient.Builder(context)
-                    .enableAutoManage((AppCompatActivity)context /* FragmentActivity */, this /* OnConnectionFailedListener */)
+                    .enableAutoManage((AppCompatActivity) context /* FragmentActivity */, this /* OnConnectionFailedListener */)
                     .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                     .build();
         }
